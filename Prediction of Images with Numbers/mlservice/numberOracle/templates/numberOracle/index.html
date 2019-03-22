@@ -1,0 +1,20 @@
+	<!DOCTYPE html> 
+	<html>
+	    <head>
+	        <script src="http://code.jquery.com/jquery-latest.js"></script>
+	    </head>
+	    <body>
+		<h2> index_test </h2>
+
+		{% if index_test %}
+		    <ul>
+		    {% for message in index_test %}
+		        <li> {{ message }} </li>
+		    {% endfor %}
+		    </ul>
+		{% else %}
+		    <p>No message is available.</p>
+		{% endif %}
+	    </body>
+	</html>
+

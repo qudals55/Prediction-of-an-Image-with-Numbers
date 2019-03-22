@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style type="text/css">
+      canvas { border: 2px solid black; width: 224px; height: 224px; }
+  </style>
+
+    <title></title>
+<body onload="predraw();">
+  <form id="form1" runat="server">
+    <input type='file' id="imgInp" />
+      <img id="blah" src="#" alt="your image" />
+  </form>
+  <canvas id="canvas" width="224" height="224"></canvas>
+  <div>
+    <input id="grayscalebtn" value="Grayscale" type="button">
+    <input id="invertbtn" value="Invert" type="button">
+    <input id="randombtn" value="Random" type="button">
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script>
+    function readURL(input) {
+
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+
+//      reader.onload = function(e) {
+//        $('#blah').attr('src', e.target.result);
+//      }
+
+//      reader.readAsDataURL(input.files[0]);
+        var iname = input.files[0].name;
+
+        var ctx = document.getElementById('canvas');
+
+            ctx = ctx.getContext('2d');
+
+            //Loading of the home test image - img1
+            var img1 = new Image();
+
+            //drawing of the test image - img1
+            img1.onload = function () {
+                //draw background image
+                draw(img1);
+                //ctx.drawImage(img1, 0, 0);
+                //draw a box over the top
+                //ctx.fillStyle = "rgba(200, 0, 0, 0.5)";
+                //ctx.fillStyle = "rgba(255,255,255,0.0)";
+                //ctx.fillRect(0, 0, 500, 500);
+
+            };
+
+            img1.src = input.files[0].name;  // 'Iris.jpg';
+
+
+    }
+  }
+
+var canvas;
+var ctx;
+var imageData;
+var data;
+var invertbtn;
+var grayscalebtn;
+var randombtn;
+
+function draw(img) {
+  ctx.drawImage(img, 0, 0);
+  img.style.display = 'none';
+  imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  data = imageData.data;
+}
+
+  function predraw(/*img*/) {
+    canvas = document.getElementById('canvas');
+    ctx = canvas.getContext('2d');
+//    ctx.drawImage(img, 0, 0);
+//    img.style.display = 'none';
+//    imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+//    data = imageData.data;
+
+    var invert = function() {
+      for (var i = 0; i < data.length; i += 4) {
+        data[i]     = 255 - data[i];     // red
+        data[i + 1] = 255 - data[i + 1]; // green
+        data[i + 2] = 255 - data[i + 2]; // blue
+      }
+      ctx.putImageData(imageData, 0, 0);
+    };
+
+    var grayscale = function() {
+      for (var i = 0; i < data.length; i += 4) {
+        var avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+        data[i]     = avg; // red
+        data[i + 1] = avg; // green
+        data[i + 2] = avg; // blue
+      }
+      ctx.putImageData(imageData, 0, 0);
+    };
+
+    var random = function() {
+         for (var i=0; i < 30000; i += 4) {
+             var p = Math.floor(Math.random() * data.length / 4) * 4;
+             data[p] = Math.floor(Math.random() * 256);
+             data[p+1] = Math.floor(Math.random() * 256);
+             data[p+2] = Math.floor(Math.random() * 256);
+             data[p+3] = 255;
+         }
+         ctx.putImageData(imageData, 0, 0);
+    }
+
+    invertbtn = document.getElementById('invertbtn');
+    invertbtn.addEventListener('click', invert);
+    grayscalebtn = document.getElementById('grayscalebtn');
+    grayscalebtn.addEventListener('click', grayscale);
+    randombtn = document.getElementById('randombtn');
+    randombtn.addEventListener('click', random);
+  }
+
+  $("#imgInp").change(function() {
+    readURL(this);
+  });
+  </script>
+</body>
+</html>

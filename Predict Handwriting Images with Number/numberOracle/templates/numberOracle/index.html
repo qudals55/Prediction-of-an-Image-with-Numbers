@@ -1,0 +1,18 @@
+<!DOCTYPE html> 
+<html>
+    <head>
+        <script src="http://code.jquery.com/jquery-latest.js"></script>
+    </head>
+    <body>
+	<h2> NumberOracle </h2>
+	{% if NumberOracle %}
+	    <ul>
+	    {% for message in NumberOracle %}
+	        <li> {{ message }} </li>
+	    {% endfor %}
+	    </ul>
+	{% else %}
+	    <p>No message is available.</p>
+	{% endif %}
+    </body>
+</html>

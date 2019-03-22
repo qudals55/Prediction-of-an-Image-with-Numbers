@@ -1,0 +1,35 @@
+<!DOCTYPE html> 
+<html>
+    <head>
+        <script src="http://code.jquery.com/jquery-latest.js"></script>
+
+    </head>
+    <body>
+	{% if test_message_list %}
+	    <ul>
+	    {% for message in test_message_list %}
+	        <li> {{ message }} </li>
+	    {% endfor %}
+	    </ul>
+	{% else %}
+	    <p>No message is available.</p>
+	{% endif %}
+        <div id="result"></div>
+
+            <input type="text" id="msg" />    
+            <input type="submit" value="get result" id="getResult" />
+        <script>
+            $('#getResult').click( function() {
+                $.ajax({
+                    url:'/ajaxtest/searchData/',
+                    dataType:'json',
+                    type:'POST',
+                    data:{'msg':$('#msg').val()},
+                    success:function(result){
+                        $('#result').text(result['msg']);
+                    }
+                });
+            })
+        </script>
+    </body>
+</html>

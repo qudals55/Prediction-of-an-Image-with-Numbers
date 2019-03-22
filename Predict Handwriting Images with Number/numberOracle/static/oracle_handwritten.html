@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+        #container{
+            display: flex;
+        }       
+        #left-container{
+            flex: 1;
+        }     
+        #right-container{
+            flex: 1;
+        }         
+        #center-container{
+            flex: 1;
+        }
+        #video {
+    	    width: 280px;
+	        height: 280px;
+	        background-color: #666;
+        }
+    </style>
+
+    <script src="https://code.jquery.com/jquery-3.1.0.js"></script>
+    <script>
+        $(document).ready(function () {
+            // 변수를 선언합니다.
+            var color = 'black';
+            var width = 5;
+            var isDown = false;
+            var newPoint, oldPoint;
+            // 소켓을 연결합니다.
+            var canvas = document.getElementById('canvas');
+            var context = canvas.getContext('2d');
+            // 마우스 이벤트를 연결합니다.
+            $(canvas).mousedown(function (event) {
+                isDown = true;
+                oldPoint = {
+                    x: event.pageX - $(this).position().left,
+                    y: event.pageY - $(this).position().top
+                };
+            });
+            $(canvas).mousemove(function (event) {
+                if (!isDown) { return; }
+                newPoint = {
+                    x: event.pageX - $(this).position().left,
+                    y: event.pageY - $(this).position().top
+                };
+                context.beginPath();
+                context.lineWidth = width;
+                context.strokeStyle = color;
+                context.moveTo(oldPoint.x, oldPoint.y);
+                context.lineTo(newPoint.x, newPoint.y);
+                context.stroke();
+                oldPoint = newPoint;
+            });
+            $(canvas).mouseup(function (event) {
+                isDown = false;
+                oldPoint = {
+                    x: event.pageX - $(this).position().left,
+                    y: event.pageY - $(this).position().top
+                };
+            });
+            
+            $('#submit').click(function () {
+                width = $('#width').val()
+            });
+        });
+    </script>
+</head>
+<body>
+    <div id="container">
+        <div id="left-container">
+            <input id="width" type="text" value="5" />
+            <button id="submit" type="submit">변경</button>
+            <br />
+            <canvas id="canvas" width="280" height="280"></canvas>
+            <br />
+            <input id="Aoracle" type="text"/>
+            <button id="Asubmit" type="submit">Oracle</button>
+            
+        </div>
+        
+        <div id="center-container">
+            <div  hidden="true">
+                <video autoplay="true" id="video"></video>
+            </div>
+            <canvas id="c1" width="280" height="280">
+                <video autoplay="true" id="videoElement">
+                </video>
+            </canvas>
+            </br>
+
+            <button id="Abutton" type="submit">Take</button>
+            </br>
+            
+            <canvas id="c2" width="280" height="280"></canvas>
+            </br>
+            <input id="Boracle" type="text"/>
+            </br>
+            <button id="Bbutton" type="submit">Oracle</button>
+            
+        </div>
+        <div id="right-container">
+            <input type='file' id="imgInp" />
+            
+            <canvas id="c3" width="280" height="280"></canvas>
+            </br>
+            <input id="rwidth" type="text" value="1"/>
+            <button id="rsubmit" onclick="putImage3()" type="submit">Oracle</button>
+            
+            <img id="MyPix" src="#" hidden="true"> </img>
+            <button id="osubmit" type="submit" hidden="true">Oracle</button>
+            <canvas id="c4" width="28" height="28"hidden="true"></canvas>
+            
+        </div>
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script>
+        $('#Asubmit').click( function() {
+            putImage1();
+            c4 = document.getElementById('c4');
+            ctx4 = c4.getContext('2d');
+            MyPix =document.querySelector("#MyPix");
+            canvas =document.querySelector("#canvas");
+            ctx4.clearRect(0, 0, 28, 28);
+            ctx4.drawImage(canvas, 0, 0, 28, 28);
+            
+            a = [];
+            for(var i = 0; i < 28; i++){
+                for(var j = 0; j < 28; j++){
+		            a.push(ctx4.getImageData(i, j, 1, 1)['data'][3]);
+                }
+            }
+            console.log(a);
+
+            $.ajax({
+                url:'/numberOracle/searchData/',
+                type: 'POST',
+                data: { msg : a },
+                success:function(result){
+                    $('#Aoracle').val(result['msg']);
+                }
+            });
+        });
+        $('#Bbutton').click( function() {
+            putImage2();
+            
+            c4 = document.getElementById('c4');
+            ctx4 = c4.getContext('2d');
+            MyPix =document.querySelector("#MyPix");
+            c2 =document.querySelector("#c2");
+            ctx4.clearRect(0, 0, 28, 28);
+            ctx4.drawImage(c2, 0, 0, 28, 28);
+            
+            a = [];
+            for(var i = 0; i < 28; i++){
+                for(var j = 0; j < 28; j++){
+		            a.push(ctx4.getImageData(i, j, 1, 1)['data'][3]);
+                }
+            }
+            console.log(a);
+
+            $.ajax({
+                url:'/numberOracle/searchData/',
+                type: 'POST',
+                data: { msg : a },
+                success:function(result){
+                    $('#Boracle').val(result['msg']);
+                }
+            });
+        });
+        $('#osubmit').click( function() {
+            c4 = document.getElementById('c4');
+            ctx4 = c4.getContext('2d');
+            MyPix =document.querySelector("#MyPix");
+            ctx4.clearRect(0, 0, 28, 28);
+            ctx4.drawImage(MyPix, 0, 0, 28, 28);
+            
+            a = [];
+            for(var i = 0; i < 28; i++){
+                for(var j = 0; j < 28; j++){
+		            a.push(ctx4.getImageData(i, j, 1, 1)['data'][3]);
+                }
+            }
+            console.log(a);
+
+            $.ajax({
+                url:'/numberOracle/searchData/',
+                type: 'POST',
+                data: { msg : a },
+                success:function(result){
+                    $('#rwidth').val(result['msg']);
+                }
+            });
+        });
+
+        function putImage1()
+        {
+            var canvas1 = document.getElementById("canvas");        
+            if (canvas1.getContext) {
+                var ctx = canvas1.getContext("2d");                
+                var myImage = canvas1.toDataURL("image/png");      
+            }
+            var imageElement = document.getElementById("MyPix");  
+            imageElement.src = myImage;                           
+        }  
+        function putImage2()
+        {
+            var canvas1 = document.getElementById("c2");        
+            if (canvas1.getContext) {
+                var ctx = canvas1.getContext("2d");                
+                var myImage = canvas1.toDataURL("image/png");      
+            }
+            var imageElement = document.getElementById("MyPix");  
+            imageElement.src = myImage;                           
+        }  
+        function putImage3()
+        {
+            var canvas1 = document.getElementById("c3");        
+            if (canvas1.getContext) {
+                var ctx = canvas1.getContext("2d");                
+                var myImage = canvas1.toDataURL("image/png");      
+            }
+            var imageElement = document.getElementById("MyPix");  
+            imageElement.src = myImage;                           
+        }  
+        function readURL(input) {
+            var reader = new FileReader();
+
+            reader.readAsDataURL(input.files[0]);
+            reader.onload = function(e) {
+                var tempImage = new Image(); //drawImage 메서드에 넣기 위해 이미지 객체화
+                tempImage.src = e.target.result; //data-uri를 이미지 객체에 주입
+                tempImage.onload = function() {
+                    //리사이즈를 위해 캔버스 객체 생성
+                    c3 = document.getElementById('c3');
+                    ctx3 = c3.getContext('2d');
+                    //캔버스 크기 설정
+                    c3.width = 280; //가로 100px
+                    c3.height = 280; //세로 100px
+
+                    //이미지를 캔버스에 그리기
+                    ctx3.drawImage(this, 0, 0, 280, 280);
+                };
+            };
+        };
+    
+        $("#imgInp").change(function() {
+            readURL(this);
+        });
+        var video = document.querySelector("video");
+        var button = document.querySelector('#Abutton');
+        //var Cbutton = document.querySelector('#Cbutton');
+        
+        //Cbutton.addEventListener('click', function(){
+        //    
+        //}, false);
+        button.addEventListener('click', function() {
+            takepicture();
+        }, false);
+        if (navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({video: true})
+            .then(function(stream) {
+              video.srcObject = stream;
+            })
+            .catch(function(err0r) {
+              console.log("Something went wrong!");
+            });
+        }
+        video = document.getElementById('video');
+        c1 = document.getElementById('c1');
+        ctx1 = c1.getContext('2d');
+        c2 = document.getElementById('c2');
+        ctx2 = c2.getContext('2d');
+        video.onplay = function() {
+            width = 280;
+            height = 280;
+            timerCallback();
+        },
+        timerCallback = function timerCallback() {
+            computeFrame();
+            setTimeout(function() {
+                timerCallback();
+            }, 0);
+        },
+        computeFrame = function computeFrame() {
+            ctx1.drawImage(video, 0, 0, width, height);
+            return;
+        },
+        takepicture = function takepicture() {
+            ctx2.drawImage(video, 0, 0, width, height);
+        }
+    </script>
+</body>
+</html>

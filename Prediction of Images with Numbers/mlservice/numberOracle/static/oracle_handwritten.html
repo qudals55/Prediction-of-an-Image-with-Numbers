@@ -1,0 +1,218 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+    <script src="jquery-3.1.0.js"></script>
+    <script>
+        var col = 0;
+        var row = 0;
+        var color = 'red';
+        var imageData;
+        var data;
+        var data2 = new Array();
+        var test = new Array();
+        $(document).ready(function () {
+            // 변수를 선언합니다.
+//            var color = 'red';
+            var width = 20;
+            var isDown = false;
+            var newPoint, oldPoint;
+            // 소켓을 연결합니다.
+            var canvas = document.getElementById('canvas');
+            var context = canvas.getContext('2d');
+            var canvas2 = document.getElementById('canvas2');
+            var context2 = canvas2.getContext('2d');
+            var img0 = new Image();
+            var img1 = new Image();
+            var img2 = new Image();
+            var img3 = new Image();
+            var img4 = new Image();
+            var img5 = new Image();
+            var img6 = new Image();
+            var img7 = new Image();
+            var img8 = new Image();
+            var img9 = new Image();
+
+
+            imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+            data = imageData.data;
+
+            document.getElementById('clear').addEventListener('click', function () {
+              if(col == 0){
+                img0 = context.getImageData(0, 0, 224, 224);
+                context2.putImageData(img0,col*224,row*224);
+                col = col + 1;
+              }
+
+              else if(col == 1){
+                img1 = context.getImageData(0, 0, 224, 224);
+                context2.putImageData(img1,col*224,row*224);
+                col = col + 1;
+              }
+
+              else if(col == 2){
+                img2 = context.getImageData(0, 0, 224, 224);
+                context2.putImageData(img2,col*224,row*224);
+                col = col + 1;
+              }
+
+              else if(col == 3){
+                img3 = context.getImageData(0, 0, 224, 224);
+                context2.putImageData(img3,col*224,row*224);
+                col = col + 1;
+              }
+
+              else if(col == 4){
+                img4 = context.getImageData(0, 0, 224, 224);
+                context2.putImageData(img4,col*224,row*224);
+                col = col + 1;
+              }
+
+              else if(col == 5){
+                img5 = context.getImageData(0, 0, 224, 224);
+                context2.putImageData(img5,col*224,row*224);
+                col = col + 1;
+              }
+
+              else if(col == 6){
+                img6 = context.getImageData(0, 0, 224, 224);
+                context2.putImageData(img6,col*224,row*224);
+                col = col + 1;
+              }
+
+              else if(col == 7){
+                img7 = context.getImageData(0, 0, 224, 224);
+                context2.putImageData(img7,col*224,row*224);
+                col = col + 1;
+              }
+
+              else if(col == 8){
+                img8 = context.getImageData(0, 0, 224, 224);
+                context2.putImageData(img8,col*224,row*224);
+                col = col + 1;
+              }
+
+              else if(col == 9){
+                img9 = context.getImageData(0, 0, 224, 224);
+                context2.putImageData(img9,col*224,row*224);
+                for(var i = 1; i <= 9; i++){
+                  for(var j = 0; j <=9; j++){
+                    var result = Math.floor(Math.random() * 10);
+                    if (result == 0){context2.putImageData(img0,j*224,i*224);}
+                    else if (result == 1){context2.putImageData(img1,j*224,i*224);}
+                    else if (result == 2){context2.putImageData(img2,j*224,i*224);}
+                    else if (result == 3){context2.putImageData(img3,j*224,i*224);}
+                    else if (result == 4){context2.putImageData(img4,j*224,i*224);}
+                    else if (result == 5){context2.putImageData(img5,j*224,i*224);}
+                    else if (result == 6){context2.putImageData(img6,j*224,i*224);}
+                    else if (result == 7){context2.putImageData(img7,j*224,i*224);}
+                    else if (result == 8){context2.putImageData(img8,j*224,i*224);}
+                    else if (result == 9){context2.putImageData(img9,j*224,i*224);}
+
+                  }
+                }
+              }
+              context.clearRect(0, 0, canvas.width, canvas.height);
+              isDown = false;
+       }, false);
+
+            // 마우스 이벤트를 연결합니다.
+            $(canvas).mousedown(function (event) {
+                isDown = true;
+                oldPoint = {
+                    x: event.pageX - $(this).position().left,
+                    y: event.pageY - $(this).position().top
+                };
+            });
+            $(canvas).mousemove(function (event) {
+                if (!isDown) { return; }
+                newPoint = {
+                    x: event.pageX - $(this).position().left,
+                    y: event.pageY - $(this).position().top
+                };
+                context.beginPath();
+                context.lineWidth = 15; //width;
+                context.strokeStyle = 'black'; //color;
+                context.moveTo(oldPoint.x, oldPoint.y);
+                context.lineTo(newPoint.x, newPoint.y);
+                context.stroke();
+                oldPoint = newPoint;
+            });
+            $(canvas).mouseup(function (event) {
+                isDown = false;
+                oldPoint = {
+                    x: event.pageX - $(this).position().left,
+                    y: event.pageY - $(this).position().top
+                };
+                imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                data = imageData.data;
+
+                  for (var i = 0; i < 28; i++) {
+                    var st = "";
+                    for (var j = 0; j < 28; j++) {
+                      pnt = i * 224 * 8 * 4 + j * 8 * 4 + 3;
+                      var sum=0;
+                      for (var k = 0; k < 8; k++) {
+                        pnt2 = pnt + k * 224 * 4;
+                        for (var l = 0; l < 8; l++)
+                          sum += data[pnt2 + l * 4];
+                      }
+                      data2[i*28+j] = sum / 64 / 256.0;
+                      if(data2[i*28+j] >= 0.02) data2[i*28+j] = 1.0;
+                      st = st + data2[i*28+j] + ", ";
+                    }
+                    console.log(st + "\n");
+                  }
+            });
+            // 입력 양식 이벤트를 연결합니다.
+            $('#pen').click(function () {
+                width = 20;
+                color = 'red';
+                $('#width').val(width);
+            });
+            $('#eraser').click(function () {
+                width = 20;
+                color = 'white';
+                $('#width').val(width);
+            });
+            $('#width').change(function () {
+                width = $(this).val()
+            });
+        });
+    </script>
+
+
+</head>
+<body>
+
+    <br />
+        <input type="submit" value="get result" id="getResult" />
+        <image id="theimage" src = "human.jpg"></image>
+        <div id="result"></div>
+
+
+
+    <script>
+        $('#getResult').click( function() {
+          var str;
+          console.log(JSON.stringify(data2));
+            $.ajax({
+                url:'/numberOracle/oracleNumber/',
+                dataType:'json',
+                type:'POST',
+//                data:{'msg':$('#msg').val()},
+                data:{'msg':  JSON.stringify(data2)},
+                success:function(result){
+                    document.getElementById("result").innerHTML = result['msg'];
+                }
+            });
+        })
+    </script>
+
+</body>
+</html>
